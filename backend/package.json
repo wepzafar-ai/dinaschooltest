@@ -1,0 +1,17 @@
+{
+  "name": "dinaschool-test-backend",
+  "version": "1.0.0",
+  "description": "DinaSchool test platform backend",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "keywords": [
+    "dinaschool",
+    "test",
+    "node"
+  ],
+  "author": "",
+  "license": "MIT"
+}
