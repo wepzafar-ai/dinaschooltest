@@ -34,24 +34,10 @@ function loadEnv() {
 loadEnv();
 
 const PORT = Number(process.env.PORT || 5000);
-const HOST = process.env.HOST || (process.env.RAILWAY_ENVIRONMENT ? "0.0.0.0" : "127.0.0.1");
+const HOST = process.env.HOST || "127.0.0.1";
 const ADMIN_LOGIN = process.env.ADMIN_LOGIN || "admin";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin12345";
-const FRONTEND_DIST = path.join(__dirname, "..", "..", "frontend", "dist");
 const tokens = new Map();
-const mimeTypes = {
-  ".html": "text/html; charset=utf-8",
-  ".js": "text/javascript; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".svg": "image/svg+xml",
-  ".ico": "image/x-icon",
-  ".woff": "font/woff",
-  ".woff2": "font/woff2"
-};
 
 function send(res, status, data) {
   res.writeHead(status, {
@@ -65,43 +51,6 @@ function send(res, status, data) {
 
 function notFound(res) {
   send(res, 404, { message: "Topilmadi" });
-}
-
-function sendFile(req, res, filePath) {
-  fs.stat(filePath, (statError, stats) => {
-    if (statError || !stats.isFile()) return serveIndex(req, res);
-    const ext = path.extname(filePath).toLowerCase();
-    res.writeHead(200, {
-      "Content-Type": mimeTypes[ext] || "application/octet-stream",
-      "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=31536000, immutable"
-    });
-    if (req.method === "HEAD") return res.end();
-    fs.createReadStream(filePath).pipe(res);
-  });
-}
-
-function serveIndex(req, res) {
-  const indexPath = path.join(FRONTEND_DIST, "index.html");
-  if (!fs.existsSync(indexPath)) {
-    return send(res, 200, {
-      message: "DinaSchool backend ishlayapti. Frontend build topilmadi. Railway build uchun npm run railway:build ishlating."
-    });
-  }
-  res.writeHead(200, {
-    "Content-Type": "text/html; charset=utf-8",
-    "Cache-Control": "no-cache"
-  });
-  if (req.method === "HEAD") return res.end();
-  fs.createReadStream(indexPath).pipe(res);
-}
-
-function serveStatic(req, res, urlPath) {
-  if (!["GET", "HEAD"].includes(req.method)) return notFound(res);
-  const safePath = path.normalize(decodeURIComponent(urlPath)).replace(/^(\.\.[/\\])+/, "");
-  const requestedPath = safePath === "/" ? "/index.html" : safePath;
-  const filePath = path.join(FRONTEND_DIST, requestedPath);
-  if (!filePath.startsWith(FRONTEND_DIST)) return notFound(res);
-  sendFile(req, res, filePath);
 }
 
 function parseBody(req) {
@@ -424,8 +373,7 @@ function router(req, res) {
       }
       if (req.method === "GET" && path === "/api/admin/dashboard") return handleAdminDashboard(req, res, url);
       if (req.method === "POST" && path === "/api/admin/students") return handleCreateStudent(req, res);
-      if (path.startsWith("/api")) return notFound(res);
-      return serveStatic(req, res, path);
+      return notFound(res);
     })
     .catch((error) => {
       console.error(error);

@@ -82,34 +82,6 @@ Backend URL:
 http://localhost:5000
 ```
 
-## Railwayga deploy qilish
-
-Loyiha Railwayga moslangan. Bitta service ichida frontend build bo'ladi va backend frontendni o'zi ochib beradi.
-
-Railway build command:
-
-```bash
-npm run railway:build
-```
-
-Railway start command:
-
-```bash
-npm run start:railway
-```
-
-Railway variables:
-
-```env
-ADMIN_LOGIN=admin
-ADMIN_PASSWORD=admin12345
-DATA_DIR=/data
-```
-
-`PORT` ni qo'ymang, Railway o'zi beradi. Natijalar o'chib ketmasligi uchun Railway Volume qo'shib, mount path ni `/data` qiling.
-
-Batafsil: `RAILWAY_DEPLOY.md`
-
 ## Admin parolini o'zgartirish
 
 `backend/.env` faylini oching:
